@@ -1,0 +1,64 @@
+﻿
+@page "/deleteUser/{id:int}"
+@inject IUserServices UserService
+@inject NavigationManager NavigationManager
+<PageTitle>UserGuide</PageTitle>
+
+@if (Id == null)
+{
+    <PageTitle>UserGuide</PageTitle>
+    <h3>Удаление пользователя</h3>
+}
+else
+{
+    <PageTitle>Изменение данных пользователя @user.LastName</PageTitle>
+    <h3>Изменение данных пользователя @user.LastName </h3>
+}
+
+<EditForm Model="user" OnValidSubmit="HandleSubmit">
+    <div>
+        <label for="firstname">Имя</label>
+        <InputText disabled id="firstname" @bind-Value="user.FirstName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="lastname">Фамилия</label>
+        <InputText disabled  id="lastname" @bind-Value="user.LastName" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="patronymic">Отчество</label>
+        <InputText disabled id="patronymic" @bind-Value="user.Patronymic" class="form-control"></InputText>
+    </div>
+    <div>
+        <label for="login">Домен\Логин</label>
+        <InputText disabled id="login" @bind-Value="user.UserLogin" class="form-control"></InputText>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-danger">Удалить пользователя</button>
+    <button class="btn btn-success" @onclick="()=>{ShowUsers();} ">
+        <i class="oi oi-arrow-right"></i> Назад
+    </button>
+</EditForm>
+
+
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+    UserData user = new UserData();
+    string btnText = string.Empty;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        user = await UserService.GetSingleUser((int)Id);
+    }
+    async Task HandleSubmit()
+    {
+        await UserService.DeleteActiveUser(user.Userid);
+    }
+    void   ShowUsers(){
+        NavigationManager.NavigateTo("/userGuide");
+    }
+}
