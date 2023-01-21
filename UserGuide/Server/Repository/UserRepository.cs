@@ -2,22 +2,38 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using UserGuide.Server.Repository;
+using UserGuide.Shared.Models;
+
 
 namespace WebAppUser.Repository
 {
     public class UserRepository  : IUserRepository
     {
         private readonly ApplicationDBContext _db;
+     
         internal DbSet<UserData> dbSet;
         public UserRepository(ApplicationDBContext db)
         {
             _db = db;
             this.dbSet = db.Set<UserData>();
+         
         }
 
-        public void Add(UserData entity)
+        public async Task<ServiceResponse> Add(UserData entity)
         {
+            var resultFind = dbSet.FirstOrDefault(x => x.UserLogin == entity.UserLogin);
+            if (resultFind != null)
+            {
+                return new ServiceResponse() 
+                { Success = false,
+                  Message = "Пользователь с данным логином есть в базе" 
+                };
+            }
+
            dbSet.Add(entity);
+           await _db.SaveChangesAsync();
+            return new ServiceResponse() 
+            { Message = "Новый пользователь добавлен успешно"};
         }
 
         public UserData Find(int id)
@@ -75,25 +91,49 @@ namespace WebAppUser.Repository
 
         }
 
-     
 
-        public void Remove(UserData entity)
+
+        public async Task<ServiceResponse> DisableUser(int id)
         {
-           dbSet.Remove(entity);
-        }
-        public void RemoveRange(IEnumerable<UserData> entities)
-        {
-            dbSet.RemoveRange(entities);
+            var obj = dbSet.FirstOrDefault(x => x.Userid == id);
+            if (obj == null)
+            {
+                return new ServiceResponse()
+                {
+                    Success = false,
+                    Message = "Пользователь с такими данными отсутвутет"
+                };
+            }
+
+            obj.UserEnable = false;
+            _db.Update(obj);
+            await _db.SaveChangesAsync();
+            return new ServiceResponse()
+
+            { Message = "Пользователь успешно удален" };   
         }
 
-        public void Save()
-        {
-           _db.SaveChangesAsync();
-        }
 
-        public void Update(UserData entity)
+        public async Task<ServiceResponse> Update(UserData entity)
         {
-            _db.Update(entity);
+            var obj = dbSet.FirstOrDefault(x => x.Userid == entity.Userid);
+            if (obj == null)
+            {
+                return new ServiceResponse()
+                {
+                    Success = false,
+                    Message = "Пользователь с такими данными отсутвутет в базе"
+                };
+            }
+
+            obj.FirstName = entity.FirstName;
+            obj.LastName = entity.LastName;
+            obj.Patronymic = entity.Patronymic;
+            obj.UserLogin = entity.UserLogin;
+            _db.Update(obj);
+            await _db.SaveChangesAsync();
+            return new ServiceResponse()
+            { Message = "Данные пользователя успешно обновлены" };
         }
     }
 }

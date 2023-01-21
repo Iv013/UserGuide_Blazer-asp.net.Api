@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System.Net.Http.Json;
 using UserGuide.Client.Pages;
 using UserGuide.Shared.Models;
@@ -9,14 +10,16 @@ namespace UserGuide.Client.UserServices
     {
         private readonly HttpClient _http;
         private readonly NavigationManager _navigationManager;
+        public IJSRuntime _jSRuntime ;
 
         public List<UserData> ListUser { get; set; } = new List<UserData>();
 
-        public UserServices(HttpClient http, NavigationManager navigationManager)
+        public UserServices(HttpClient http, NavigationManager navigationManager, IJSRuntime jSRuntime)
 
         {
             _http = http;
             _navigationManager = navigationManager;
+         _jSRuntime = jSRuntime;    
         }
 
         public async Task<UserData> GetSingleUser(int id)
@@ -45,34 +48,34 @@ namespace UserGuide.Client.UserServices
         public async Task UpdateUser(UserData user)
         {
             var result = await _http.PutAsJsonAsync("api/User", user);
-          //  var response = await result.Content.ReadFromJsonAsync<List<UserData>>();
-            if (result != null)
-            {
-               // ListUser = response;
+         var response = await result.Content.ReadFromJsonAsync<ServiceResponse>();
+
+          await  _jSRuntime.InvokeVoidAsync("ShowToastr", response.Success,  response.Message);
                 _navigationManager.NavigateTo("/");
-            }
+         
         }
 
         public async Task DeleteActiveUser(int id)
         {
-            var result = await _http.PutAsJsonAsync($"api/User/{id}", id);
-          //  var response = await result.Content.ReadFromJsonAsync<List<UserData>>();
-            if (result != null)
-            {
-              //  ListUser = response;
-                _navigationManager.NavigateTo("/");
-            }
+            await ShowMessage(await _http.PutAsJsonAsync($"api/User/{id}", id));
+            //var response = await result.Content.ReadFromJsonAsync<ServiceResponse>(); ;
+            //await _jSRuntime.InvokeVoidAsync("ShowToastr", response.Success, response.Message);
+            //_navigationManager.NavigateTo("/");
+            
         }
 
         public async Task CreateUser(UserData user)
         {
+           await ShowMessage( await _http.PostAsJsonAsync("api/User", user));
            
-            var result = await _http.PostAsJsonAsync("api/User", user);
-         //   var response = await result.Content.ReadFromJsonAsync<List<UserData>>();
-         
-              //  ListUser = response;
-                _navigationManager.NavigateTo("/");
           
+        }
+
+        private async Task ShowMessage(HttpResponseMessage? result)
+        {
+            var response = await result.Content.ReadFromJsonAsync<ServiceResponse>();
+            await _jSRuntime.InvokeVoidAsync("ShowToastr", response.Success, response.Message);
+            _navigationManager.NavigateTo("/");
         }
     }
 }

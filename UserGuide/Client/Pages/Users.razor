@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject IUserServices UserService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime _JsRuntime
 <PageTitle>UserGuide</PageTitle>
 
 <h3 >Список пользователей</h3>
@@ -52,22 +53,28 @@
     
 </div>
 
-
+<div class="text-lg-end m-2">
+    <button class="btn btn-outline-primary" @onclick="()=>{Showtoaster();} ">test</button>
+</div>
 
 @code {
+   
     protected override async Task OnInitializedAsync()
     {
         await UserService.GetUsers();
     }
     void ShowUser(int id) {
         if (id != 0)
-        
-        NavigationManager.NavigateTo($"user/{id}");
+
+            NavigationManager.NavigateTo($"user/{id}");
         else NavigationManager.NavigateTo($"user");   
     }
     void DeleteUser(int id)
     {
         NavigationManager.NavigateTo($"deleteUser/{id}");
 
+    }
+    async void Showtoaster(){
+       await _JsRuntime.InvokeVoidAsync("ShowToastr", true, "sdfs");
     }
 }

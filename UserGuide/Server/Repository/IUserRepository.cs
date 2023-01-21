@@ -23,11 +23,10 @@ namespace UserGuide.Server.Repository
             );
 
 
-        void Add(UserData entity);
-        void RemoveRange(IEnumerable<UserData> entities);
-        void Remove(UserData entity);
-        void Save();
-        void Update(UserData entity);
+         Task<ServiceResponse> Add(UserData entity);
+  
+        Task<ServiceResponse> DisableUser(int id);
+        Task<ServiceResponse> Update(UserData entity);
 
     }
 }
