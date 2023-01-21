@@ -13,7 +13,7 @@ namespace UserGuide.Shared.Models
         [Required(ErrorMessage = "Данный параметр не может быть пустым")]
         public string LastName { get; set; }
 
-        public string Patronymic { get; set; }
+        public string Patronymic { get; set; } = string.Empty;
 
         //[RegularExpression(@"\w+\.\w+\\\w+") ]
         [RegularExpression(@"[0-9a-zA-Z-]+\.[a-zA-Z]{2,4}\\[0-9A-Za-z_.-]+", ErrorMessage = "Не верный формат (Домен\\логин)")]

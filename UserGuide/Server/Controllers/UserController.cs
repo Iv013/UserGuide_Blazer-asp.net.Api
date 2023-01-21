@@ -24,7 +24,7 @@ namespace UserGuide.Server.Controllers
                     UserEnable = true
                 };
                 _userRepo.Add(user);
-                _userRepo.Save();
+                
             }
            
 
@@ -45,49 +45,27 @@ namespace UserGuide.Server.Controllers
         }
 
         [HttpPost]
-        public ActionResult<List<UserData>> CreateUser(UserData userData)
-        {
-            if (ModelState.IsValid)
-            {
-                _userRepo.Add(userData);
-                _userRepo.Save();
-            }
-
-            return Ok(_userRepo.GetAll(x => x.UserEnable == true));
+        public async Task<ActionResult<ServiceResponse>> CreateUser(UserData userData)
+        {           
+          var result =await _userRepo.Add(userData);    
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public void DeleteActiveUser(int id)
+        public async Task<ActionResult<ServiceResponse>> DeleteActiveUser(int id)
         {
-            //, isTracking: false
-            var obj = _userRepo.FirstOfDefault(x => x.Userid == id).Result;
-            if (ModelState.IsValid)
-            {
-                obj.UserEnable = false;
-                _userRepo.Update(obj);
-                _userRepo.Save();
-            }
-           
+            var result = await _userRepo.DisableUser(id);
+            return Ok(result);
         }
-
+         
         [HttpPut]
-        public void UpdateActiveUser(UserData userData)
+        public async Task<ActionResult<ServiceResponse>> UpdateActiveUser(UserData userData)
         {
-            //, isTracking: false
-            var obj = _userRepo.FirstOfDefault(x => x.Userid == userData.Userid).Result;
-            if (ModelState.IsValid)
-            {
-                obj.FirstName = userData.FirstName;
-                obj.LastName = userData.LastName;
-                obj.Patronymic = userData.Patronymic;
-                obj.UserLogin = userData.UserLogin;
-
-
-                _userRepo.Update(obj);
-                _userRepo.Save();
-            }
-
+            var result  = await _userRepo.Update(userData);
+            return Ok(result);
         }
+
+    
 
 
 
