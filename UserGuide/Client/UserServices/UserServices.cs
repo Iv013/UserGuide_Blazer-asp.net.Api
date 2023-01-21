@@ -25,7 +25,6 @@ namespace UserGuide.Client.UserServices
         public async Task<UserData> GetSingleUser(int id)
         {
             var result = await _http.GetFromJsonAsync<UserData>($"api/User/{id}");
-
             if (result != null)
             {
                 return  result;
@@ -37,38 +36,25 @@ namespace UserGuide.Client.UserServices
         public async Task GetUsers()
         {
             var result = await _http.GetFromJsonAsync<List<UserData>>("api/User");
-            
             if (result != null)
             {
                 ListUser = result;
-            }
-            
+            }       
         }
 
         public async Task UpdateUser(UserData user)
         {
-            var result = await _http.PutAsJsonAsync("api/User", user);
-         var response = await result.Content.ReadFromJsonAsync<ServiceResponse>();
-
-          await  _jSRuntime.InvokeVoidAsync("ShowToastr", response.Success,  response.Message);
-                _navigationManager.NavigateTo("/");
-         
+            await ShowMessage(await _http.PutAsJsonAsync("api/User", user));   
         }
 
         public async Task DeleteActiveUser(int id)
         {
             await ShowMessage(await _http.PutAsJsonAsync($"api/User/{id}", id));
-            //var response = await result.Content.ReadFromJsonAsync<ServiceResponse>(); ;
-            //await _jSRuntime.InvokeVoidAsync("ShowToastr", response.Success, response.Message);
-            //_navigationManager.NavigateTo("/");
-            
         }
 
         public async Task CreateUser(UserData user)
         {
-           await ShowMessage( await _http.PostAsJsonAsync("api/User", user));
-           
-          
+           await ShowMessage( await _http.PostAsJsonAsync("api/User", user));  
         }
 
         private async Task ShowMessage(HttpResponseMessage? result)
