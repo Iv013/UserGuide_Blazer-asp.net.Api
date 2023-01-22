@@ -8,7 +8,7 @@ namespace UserGuide.Shared.Models
 {
     public class ServiceResponse
     {
-        public bool Success { get; set; } = true;
+        public int Success { get; set; } = 200;
         public string Message { get; set; } = string.Empty;
     }
 }

@@ -3,19 +3,33 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime _JsRuntime
 <PageTitle>UserGuide</PageTitle>
+<div class=" col-10 offset-1 p-2 ">
+    <h3 class="MyH3 ">Список пользователей</h3>
+</div>
 
-<h3 >Список пользователей</h3>
 
-
-<div class="col-10 ">
-    <div class="text-lg-end m-2">
-        <button class="btn btn-outline-primary" @onclick="()=>{ShowUser(0);} ">Добавить</button>
+<div class="col-10 offset-1 ">
+    <div class="row  p-2  ">
+        <div class="col-6 ">
+             <div class="input-group  ">
+            <input @bind-value="searchText"
+                   @bind-value:event="oninput"
+                   type="search"
+                   @onkeyup="HandleSearch"
+                   class="form-control "
+                   placeholder="Строка поиска по фамилии" />
+            </div>
+         </div>
+        <div class=" col-6 text-end ">
+        <button class="btn btn-outline-primary" @onclick="()=>{ShowUser(0);} "><i class="oi oi-plus"></i><strong> Добавить</strong></button>
+         </div>
     </div>
-    <div class="text-lg-end border p-3">
+    <div class="text-sm-end border p-3 m-2">
    
-        <table class="table table-striped table-hover col-7">
+
+        <table class="Mytable" >
             <thead>
-                <tr class="mb-0">
+                <tr >
                     <th>Фамилия</th>
                     <th>Имя</th>
                     <th>Отчество</th>
@@ -30,8 +44,8 @@
                         <td width="20%">@user.LastName</td>
                         <td width="20%">@user.FirstName</td>
                         <td width="20%">@user.Patronymic</td>
-                        <td width="30%">@user.UserLogin</td>
-                        <td>
+                        <td>@user.UserLogin</td>
+                        <td width="120">
                             <div>
                                 <button class="btn btn-outline-info" @onclick="()=>{ShowUser(user.Userid);} ">
                                     <i class="oi oi-pencil"></i>
@@ -50,18 +64,18 @@
 
         </table>
     </div>
-    
+   
 </div>
 
-<div class="text-lg-end m-2">
-    <button class="btn btn-outline-primary" @onclick="()=>{Showtoaster();} ">test</button>
-</div>
+
 
 @code {
-   
-    protected override async Task OnInitializedAsync()
+    private string searchText = string.Empty;
+    private List<UserData> ListU = new List<UserData>();
+    protected override async Task OnParametersSetAsync()
     {
         await UserService.GetUsers();
+        ListU = UserService.ListUser;
     }
     void ShowUser(int id) {
         if (id != 0)
@@ -74,7 +88,24 @@
         NavigationManager.NavigateTo($"deleteUser/{id}");
 
     }
-    async void Showtoaster(){
-       await _JsRuntime.InvokeVoidAsync("ShowToastr", true, "sdfs");
+  
+
+    public async Task HandleSearch(KeyboardEventArgs args)
+    {
+        if (args.Key == null || args.Key.Equals("Enter"))
+        {
+            var result = ListU.Where(x => x.LastName.Contains(searchText)).ToList();
+            UserService.ListUser = result;
+        }
+        else if (searchText.Length > 1)
+        {
+            var result = ListU.Where(x => x.LastName.Contains(searchText, StringComparison.OrdinalIgnoreCase)).ToList();
+            UserService.ListUser = result;
+        }
+        else if (searchText.Length == 0)
+        {
+            
+            UserService.ListUser = ListU;
+        }
     }
 }

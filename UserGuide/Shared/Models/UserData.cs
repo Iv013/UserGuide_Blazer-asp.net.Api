@@ -7,21 +7,23 @@ namespace UserGuide.Shared.Models
     {
         [Key]
         public int Userid { get; set; }
-
-        [Required (ErrorMessage = "Данный параметр не может быть пустым")]
+        [StringLength(50, ErrorMessage = "Имя должно быть не длинее 50 символов")]
+        [Required (ErrorMessage = "Введите имя")]
         public string FirstName     { get; set; }
-        [Required(ErrorMessage = "Данный параметр не может быть пустым")]
-        public string LastName { get; set; }
 
+        [StringLength(50, ErrorMessage = "Фамилия должна быть не длинее 50 символов")]
+        [Required(ErrorMessage = "Введите фамилию")]
+        public string LastName { get; set; }
+       
+        [StringLength(50, ErrorMessage = "Отчество должно быть не длинее 50 символов")]
         public string Patronymic { get; set; } = string.Empty;
 
-        //[RegularExpression(@"\w+\.\w+\\\w+") ]
-        [RegularExpression(@"[0-9a-zA-Z-]+\.[a-zA-Z]{2,4}\\[0-9A-Za-z_.-]+", ErrorMessage = "Не верный формат (Домен\\логин)")]
-     
-        [Required(ErrorMessage = "Данный параметр не может быть пустым")]
+        [RegularExpression (@"^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,6}\\[a-zA-Z0-9_.-]+"
+        , ErrorMessage = "Не верный формат (Домен1.домен2\\Логин)")]
+        [Required(ErrorMessage = "Введите логин в формате 'Домен\\Логин'")]
         public string UserLogin { get; set; }
 
         public bool UserEnable { get; set; }
-
+        
     }
 }

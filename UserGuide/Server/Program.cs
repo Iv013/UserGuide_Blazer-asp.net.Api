@@ -15,7 +15,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(config =>
 });
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 //вместо работы сервиса работы с AD усановлена заглушка 
-builder.Services.AddScoped<IActiveDirectoryMethod, ActiveDirectoryStub>();
+builder.Services.AddScoped<IActiveDirectoryService, ActiveDirectoryStub>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

@@ -4,39 +4,63 @@
 @inject NavigationManager NavigationManager
 <PageTitle>UserGuide</PageTitle>
 
-@if (Id == null)
-{
+
     <PageTitle>UserGuide</PageTitle>
-    <h3>Удаление пользователя</h3>
-}
-else
-{
-    <PageTitle>Изменение данных пользователя @user.LastName</PageTitle>
-    <h3>Изменение данных пользователя @user.LastName </h3>
-}
+    <div>
+    <h3 class="MyH3_1 text-center">Удаление пользователя</h3>
+    </div>
+
+
 
 <EditForm Model="user" OnValidSubmit="HandleSubmit">
-    <div>
-        <label for="firstname">Имя</label>
-        <InputText disabled id="firstname" @bind-Value="user.FirstName" class="form-control"></InputText>
+   <div class="col-md-6 offset-3 ">
+        <div class="form-group row m-md-3">
+            <div class="col-2">
+            <label class="mylebel"  for="lastname">Фамилия</label>
+            </div>
+            <div class="col-10">
+                <InputText id="lastname" disabled @bind-Value="user.LastName" class="form-control"></InputText>
+       
+            </div>
+            </div>
+        <div class="form-group row m-md-3 ">
+            <div class="col-2">
+                <label class="mylebel" for="firstname">Имя</label>
+            </div>
+            <div class="col-10">
+                <InputText id="firstname" disabled @bind-Value="user.FirstName" class="form-control"></InputText>
+          
+            </div>
+        </div >
+        <div class="form-group row m-md-3">
+            <div class="col-2">
+                <label class="mylebel" for="patronymic">Отчество</label>
+            </div>
+            <div class="col-10">
+                <InputText id="patronymic" disabled @bind-Value="user.Patronymic" class="form-control"></InputText>
+            </div>
+        </div>
+        <div class="form-group row m-md-3">
+            <div class="col-2 ">
+                <label class="mylebel" for="login">Домен\Логин</label>
+            </div>
+            <div class="col-10">
+                <InputText id="login" disabled @bind-Value="user.UserLogin" class="form-control"></InputText>
+            
+            </div>
+        </div>
+
+        <div class="form-group row offset-sm-1 ">
+            <button type="submit" class="btn btn-danger col-5 p-2 mx-lg-2">Удалить пользователя</button>
+            <button class="btn btn-success col-5 p-2 me-2" @onclick="()=>{ShowUsers();} ">
+                <i class="oi oi-arrow-thick-right"></i> Назад
+            </button>
+        </div>
+
     </div>
-    <div>
-        <label for="lastname">Фамилия</label>
-        <InputText disabled  id="lastname" @bind-Value="user.LastName" class="form-control"></InputText>
-    </div>
-    <div>
-        <label for="patronymic">Отчество</label>
-        <InputText disabled id="patronymic" @bind-Value="user.Patronymic" class="form-control"></InputText>
-    </div>
-    <div>
-        <label for="login">Домен\Логин</label>
-        <InputText disabled id="login" @bind-Value="user.UserLogin" class="form-control"></InputText>
-    </div>
-    <br />
-    <button type="submit" class="btn btn-danger">Удалить пользователя</button>
-    <button class="btn btn-success" @onclick="()=>{ShowUsers();} ">
-        <i class="oi oi-arrow-right"></i> Назад
-    </button>
+  
+   
+   
 </EditForm>
 
 
@@ -59,6 +83,6 @@ else
         await UserService.DeleteActiveUser(user.Userid);
     }
     void   ShowUsers(){
-        NavigationManager.NavigateTo("/userGuide");
+        NavigationManager.NavigateTo("/");
     }
 }

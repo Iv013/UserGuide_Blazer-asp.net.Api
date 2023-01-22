@@ -2,21 +2,35 @@
 
 namespace UserGuide.Server.Services
 {
-    public class ActiveDirectoryStub : IActiveDirectoryMethod
+    public class ActiveDirectoryStub : IActiveDirectoryService
     {
         private NameValueCollection UserLogin = new NameValueCollection()
         {
-            {"qwerty.com", "IvanovII"},
-            {"qwerty.com","PetrovPP"},
-             {"123.com","PetrovPP"},
-             {"321.com","PetrovPP"},
-             {"qwerty.com","SidorovSS"}
+            {"google.com", "IvanovII"},
+            {"google.Com","PetrovPP"},
+             {"VK.com","Petrov"},
+             {"testdomen.ru","SidorovSS"},
+             {"vk.com","SidorovSS"},
+             {"vk.com","SidorovSI"}
         };
 
-        public bool ContainsUser(string userLogin)
+        public bool ContainsUser(string domen, string login)
         {
-           var DomenLogin  = userLogin.Split('\\').Select(x=>x.ToLower()).ToArray() ;
-          return  UserLogin.GetValues(DomenLogin[0]).Select(x=>x.ToLower()).Contains(DomenLogin[1]);
+            try
+            {
+                var result = UserLogin.GetValues(domen).ToArray();   //поместил в try так как если в коллекции нет нужного домена ToArray выкинет исклюение
+                foreach (var item in result)
+                {
+                    if (item.Equals(login, StringComparison.OrdinalIgnoreCase)) return true;
+                }
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+           
+            return  false;
         }
 
 

@@ -19,27 +19,33 @@ namespace WebAppUser.Repository
          
         }
 
-        public async Task<ServiceResponse> Add(UserData entity)
+        public async Task<ServiceResponse> Add(UserData obj)
         {
-            var resultFind = dbSet.FirstOrDefault(x => x.UserLogin == entity.UserLogin);
-            if (resultFind != null)
-            {
-                return new ServiceResponse() 
-                { Success = false,
-                  Message = "Пользователь с данным логином есть в базе" 
-                };
+            var resultFind = dbSet.FirstOrDefault(x => x.UserLogin == obj.UserLogin);
+            if (resultFind != null ) //Проверяем есть такой  пользователь в базе или нет
+            { 
+                if (resultFind.UserEnable) //если он активный тогда не добаляем его
+                {
+                    return new ServiceResponse()
+                    {
+                        Success = 409, //ошибка
+                        Message = "Пользователь с данным логином есть в базе"
+                    };
+                } else      //если не активный то активируем
+                {
+                    obj.UserEnable = true;
+                    _db.Update(obj);
+                    await _db.SaveChangesAsync();
+                    return new ServiceResponse() { Message = "Новый пользователь успешно добавлен в справочник " };
+                }
             }
 
-           dbSet.Add(entity);
+           dbSet.Add(obj);
            await _db.SaveChangesAsync();
-            return new ServiceResponse() 
-            { Message = "Новый пользователь добавлен успешно"};
+           return new ServiceResponse() { Message = "Новый пользователь успешно добавлен в справочник" };
         }
 
-        public UserData Find(int id)
-        {
-            return dbSet.Find(id);
-        }
+      
 
         public async Task<UserData> FirstOfDefault(Expression<Func<UserData, bool>>
             filter = null, string includeProperty = null, bool isTracking = true)
@@ -100,7 +106,7 @@ namespace WebAppUser.Repository
             {
                 return new ServiceResponse()
                 {
-                    Success = false,
+                    Success = 409, //ошибка
                     Message = "Пользователь с такими данными отсутвутет"
                 };
             }
@@ -108,9 +114,7 @@ namespace WebAppUser.Repository
             obj.UserEnable = false;
             _db.Update(obj);
             await _db.SaveChangesAsync();
-            return new ServiceResponse()
-
-            { Message = "Пользователь успешно удален" };   
+            return new ServiceResponse()  { Message = "Пользователь успешно удален" };   
         }
 
 
@@ -121,7 +125,7 @@ namespace WebAppUser.Repository
             {
                 return new ServiceResponse()
                 {
-                    Success = false,
+                    Success = 409, //ошибка
                     Message = "Пользователь с такими данными отсутвутет в базе"
                 };
             }
@@ -133,7 +137,7 @@ namespace WebAppUser.Repository
             _db.Update(obj);
             await _db.SaveChangesAsync();
             return new ServiceResponse()
-            { Message = "Данные пользователя успешно обновлены" };
+            { Message = "Данные пользователя успешно обновлены в справочнике" };
         }
     }
 }
