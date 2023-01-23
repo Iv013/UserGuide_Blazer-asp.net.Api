@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
-using UserGuide.Client.Pages;
 using UserGuide.Shared.Models;
 
 namespace UserGuide.Client.UserServices

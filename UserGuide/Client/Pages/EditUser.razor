@@ -98,7 +98,7 @@ else
     {
         if (Id == null){
             user.UserEnable = true;
-            if (user.Patronymic == null) user.Patronymic = String.Empty;
+           // if (user.Patronymic == null) user.Patronymic = String.Empty;
             await UserService.CreateUser(user);
         } else{
             await UserService.UpdateUser(user);

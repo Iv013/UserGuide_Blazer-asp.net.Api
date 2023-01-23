@@ -19,7 +19,7 @@ namespace UserGuide.Server.Controllers
             _ADservice = ADservice;
 
 
-            if (userRepo.GetAll().GetAwaiter().GetResult().Count() == 0)
+            if (userRepo.GetAllUsers().GetAwaiter().GetResult().Count() == 0)
             {
                 InitializedBD.MethodInit(_userRepo);
             }
@@ -30,12 +30,12 @@ namespace UserGuide.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<UserData>>> GetUsers()
         {
-            var users = await _userRepo.GetAll(x => x.UserEnable == true);
+            var users = await _userRepo.GetAllUsers(x => x.UserEnable == true);
             return  Ok(users) ;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<List<UserData>>> GetSingleUser(int id)
+        public async Task<ActionResult<UserData>> GetSingleUser(int id)
         {
             var users = await _userRepo.FirstOfDefault(x => x.Userid == id);
             return Ok(users);
@@ -45,7 +45,7 @@ namespace UserGuide.Server.Controllers
         public async Task<ActionResult<ServiceResponse>> CreateUser(UserData userData)
         {
             
-            var result =await _userRepo.Add(userData);
+            var result =await _userRepo.AddUser(userData);
 
             var UserLogin = userData.UserLogin.Split('\\').ToArray();
             CheckUserInActiveDirectory(userData, result);
@@ -62,19 +62,22 @@ namespace UserGuide.Server.Controllers
         [HttpPut]
         public async Task<ActionResult<ServiceResponse>> UpdateActiveUser(UserData userData)
         {
-            var result = await _userRepo.Update(userData);
+            var result = await _userRepo.UpdateUser(userData);
             CheckUserInActiveDirectory(userData, result);
             return Ok(result);
         }
 
         private void CheckUserInActiveDirectory(UserData userData, ServiceResponse result)
         {
-            var UserLogin = userData.UserLogin.Split('\\').ToArray();
-            var userInAD = _ADservice.ContainsUser(UserLogin[0], UserLogin[1]);
-            if (!userInAD && result.Success == 200)
+            var domenLogin = userData.UserLogin.Split('\\').ToArray();
+            var userInAD = _ADservice.ContainsUser(domenLogin[0], domenLogin[1]);
+            if (!userInAD )
+            {   
+                result.Success = result.Success == 200? 102: result.Success;
+                result.Message = result.Message +", данный пользователь отсутcтвует в Active Directory";
+            } else
             {
-                result.Success = 102;
-                result.Message = result.Message +", но данный пользователь отсутcтвует в Active Directory";
+                result.Message = result.Message + ", данный пользователь присутствует в Active Directory";
             }
         }
 

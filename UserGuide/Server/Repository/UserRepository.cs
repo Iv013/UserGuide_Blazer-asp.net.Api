@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using UserGuide.Server.Repository;
-using UserGuide.Shared.Models;
 
 
 namespace WebAppUser.Repository
@@ -19,20 +18,24 @@ namespace WebAppUser.Repository
          
         }
 
-        public async Task<ServiceResponse> Add(UserData obj)
+        public async Task<ServiceResponse> AddUser(UserData entity)
         {
-            var resultFind = dbSet.FirstOrDefault(x => x.UserLogin == obj.UserLogin);
-            if (resultFind != null ) //Проверяем есть такой  пользователь в базе или нет
+            var obj = dbSet.FirstOrDefault(x => x.UserLogin == entity.UserLogin);
+            if (obj != null ) //Проверяем есть такой  пользователь в базе или нет
             { 
-                if (resultFind.UserEnable) //если он активный тогда не добаляем его
+                if (obj.UserEnable) //если он активный тогда не добаляем его
                 {
                     return new ServiceResponse()
                     {
                         Success = 409, //ошибка
-                        Message = "Пользователь с данным логином есть в базе"
+                        Message = "Пользователь не добавлен. Пользователь с данным логином уже есть в базе"
                     };
-                } else      //если не активный то активируем
+                } else      //если не активный то обновляем данные и активируем
                 {
+                    obj.FirstName = entity.FirstName;
+                    obj.LastName = entity.LastName;
+                    obj.Patronymic = entity.Patronymic;
+                    obj.UserLogin = entity.UserLogin;
                     obj.UserEnable = true;
                     _db.Update(obj);
                     await _db.SaveChangesAsync();
@@ -40,7 +43,7 @@ namespace WebAppUser.Repository
                 }
             }
 
-           dbSet.Add(obj);
+           dbSet.Add(entity);
            await _db.SaveChangesAsync();
            return new ServiceResponse() { Message = "Новый пользователь успешно добавлен в справочник" };
         }
@@ -69,7 +72,7 @@ namespace WebAppUser.Repository
             return  query.FirstOrDefault();
         }
 
-        public async Task<IEnumerable<UserData>> GetAll(Expression<Func<UserData, 
+        public async Task<IEnumerable<UserData>> GetAllUsers(Expression<Func<UserData, 
             bool>> filter = null,
             Func<IQueryable<UserData>, 
                 IOrderedQueryable<UserData>> orderBY = null,
@@ -118,7 +121,7 @@ namespace WebAppUser.Repository
         }
 
 
-        public async Task<ServiceResponse> Update(UserData entity)
+        public async Task<ServiceResponse> UpdateUser(UserData entity)
         {
             var obj = dbSet.FirstOrDefault(x => x.Userid == entity.Userid);
             if (obj == null)

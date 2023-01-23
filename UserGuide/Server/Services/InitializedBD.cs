@@ -18,7 +18,7 @@ namespace UserGuide.Server.Services
                 UserLogin = "Google.com\\IvanovII",
                 UserEnable = true
             };
-            db.Add(user);
+            db.AddUser(user);
             user = new UserData()
             {
                 FirstName = "Петр",
@@ -27,7 +27,7 @@ namespace UserGuide.Server.Services
                 UserLogin = "google.Com\\petrovPP",
                 UserEnable = true
             };
-            db.Add(user);
+            db.AddUser(user);
             user = new UserData()
             {
                 FirstName = "Сидоров",
@@ -36,7 +36,7 @@ namespace UserGuide.Server.Services
                 UserLogin = "testdomen.ru\\IvanovII",
                 UserEnable = true
             };
-            db.Add(user);
+            db.AddUser(user);
 
 
 

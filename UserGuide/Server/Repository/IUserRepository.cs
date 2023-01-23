@@ -8,7 +8,7 @@ namespace UserGuide.Server.Repository
 
       
 
-        Task<IEnumerable<UserData>> GetAll(
+        Task<IEnumerable<UserData>> GetAllUsers(
             Expression<Func<UserData, bool>> filter = null,
             Func<IQueryable<UserData>,
             IOrderedQueryable<UserData>> orderBY = null,
@@ -23,10 +23,9 @@ namespace UserGuide.Server.Repository
             );
 
 
-         Task<ServiceResponse> Add(UserData entity);
-  
+         Task<ServiceResponse> AddUser(UserData entity);
         Task<ServiceResponse> DisableUser(int id);
-        Task<ServiceResponse> Update(UserData entity);
+        Task<ServiceResponse> UpdateUser(UserData entity);
 
     }
 }

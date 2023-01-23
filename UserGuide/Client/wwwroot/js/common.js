@@ -10,6 +10,6 @@
     }
       
     if (Result === 102) {
-        toastr.warning(message, "Предупреждение", { timeout: 5000 });
+        toastr.warning(message, "Предупреждение", { timeout: 8000 });
     }
 }

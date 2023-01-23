@@ -6,10 +6,11 @@ namespace UserGuide.Server.Services
     {
         private NameValueCollection UserLogin = new NameValueCollection()
         {
-            {"google.com", "IvanovII"},
-            {"google.Com","PetrovPP"},
+             {"google.com", "IvanovII"},
+             {"google.Com","PetrovPP"},
              {"VK.com","Petrov"},
              {"testdomen.ru","SidorovSS"},
+             {"testdomen.ru","Ivanovi"},
              {"vk.com","SidorovSS"},
              {"vk.com","SidorovSI"}
         };
