@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UserGuide.Shared.Models;
 
 namespace UserGuide.Server.Data
 {

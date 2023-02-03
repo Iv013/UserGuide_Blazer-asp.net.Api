@@ -1,10 +1,8 @@
 global using UserGuide.Shared.Models;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using UserGuide.Core.Repository;
 using UserGuide.Server.Data;
 using UserGuide.Server.Services;
-using WebAppUser.Repository;
-using UserGuide.Server.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +11,11 @@ builder.Services.AddDbContext<ApplicationDBContext>(config =>
 {
     config.UseInMemoryDatabase("MEMORY");
 });
+//builder.Services.AddDbContext<ApplicationDBContext>(config =>
+//{
+//    config.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+//});
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-//вместо работы сервиса работы с AD усановлена заглушка 
 builder.Services.AddScoped<IActiveDirectoryService, ActiveDirectoryStub>();
 
 builder.Services.AddControllersWithViews();

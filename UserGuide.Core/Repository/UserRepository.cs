@@ -1,10 +1,10 @@
 ﻿using UserGuide.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using UserGuide.Server.Repository;
 
+using UserGuide.Shared.Models;
 
-namespace WebAppUser.Repository
+namespace UserGuide.Core.Repository
 {
     public class UserRepository  : IUserRepository
     {
@@ -28,7 +28,7 @@ namespace WebAppUser.Repository
                     return new ServiceResponse()
                     {
                         Success = 409, //ошибка
-                        Message = "Пользователь не добавлен. Пользователь с данным логином уже есть в базе"
+                        Message = WebConstant.AddErrorUserContainedInBase
                     };
                 } else      //если не активный то обновляем данные и активируем
                 {
@@ -39,13 +39,13 @@ namespace WebAppUser.Repository
                     obj.UserEnable = true;
                     _db.Update(obj);
                     await _db.SaveChangesAsync();
-                    return new ServiceResponse() { Message = "Новый пользователь успешно добавлен в справочник " };
+                    return new ServiceResponse() { Message = WebConstant.AddUserSuccess };
                 }
             }
 
            dbSet.Add(entity);
            await _db.SaveChangesAsync();
-           return new ServiceResponse() { Message = "Новый пользователь успешно добавлен в справочник" };
+           return new ServiceResponse() { Message = WebConstant.AddUserSuccess };
         }
 
       
@@ -110,14 +110,14 @@ namespace WebAppUser.Repository
                 return new ServiceResponse()
                 {
                     Success = 409, //ошибка
-                    Message = "Пользователь с такими данными отсутвутет"
+                    Message = WebConstant.FindUserNotSuccess
                 };
             }
 
             obj.UserEnable = false;
             _db.Update(obj);
             await _db.SaveChangesAsync();
-            return new ServiceResponse()  { Message = "Пользователь успешно удален" };   
+            return new ServiceResponse()  { Message = WebConstant.UserDeleteSuccess };   
         }
 
 
@@ -129,7 +129,7 @@ namespace WebAppUser.Repository
                 return new ServiceResponse()
                 {
                     Success = 409, //ошибка
-                    Message = "Пользователь с такими данными отсутвутет в базе"
+                    Message = WebConstant.FindUserNotSuccess
                 };
             }
 
@@ -140,7 +140,7 @@ namespace WebAppUser.Repository
             _db.Update(obj);
             await _db.SaveChangesAsync();
             return new ServiceResponse()
-            { Message = "Данные пользователя успешно обновлены в справочнике" };
+            { Message = WebConstant.UserUpdateSuccess };
         }
     }
 }

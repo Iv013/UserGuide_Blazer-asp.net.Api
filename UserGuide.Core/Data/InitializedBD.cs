@@ -1,11 +1,14 @@
-﻿using UserGuide.Server.Repository;
+﻿
 
-namespace UserGuide.Server.Services
+using UserGuide.Core.Repository;
+using UserGuide.Shared.Models;
+
+namespace UUserGuide.Core.Data
 {
     public static class InitializedBD
     {
 
-       
+
 
         public static void MethodInit(IUserRepository db)
         {

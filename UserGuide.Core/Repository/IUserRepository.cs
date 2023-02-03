@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
+using UserGuide.Shared.Models;
 
-
-namespace UserGuide.Server.Repository
+namespace UserGuide.Core.Repository
 {
     public interface IUserRepository
     {

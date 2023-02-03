@@ -28,7 +28,7 @@ namespace UserGuide.Client.UserServices
             {
                 return  result;
             }
-            throw new Exception("Пользовательне найден!");
+            throw new Exception(WebConstant.FindUserNotSuccess);
           
         }
 

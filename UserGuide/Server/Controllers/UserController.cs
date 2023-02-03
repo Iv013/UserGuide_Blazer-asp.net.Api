@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UserGuide.Shared.Models;
-using UserGuide.Server.Repository;
+using UserGuide.Core.Repository;
 using UserGuide.Server.Services;
+using UUserGuide.Core.Data;
 
 namespace UserGuide.Server.Controllers
 {
@@ -23,8 +23,7 @@ namespace UserGuide.Server.Controllers
             {
                 InitializedBD.MethodInit(_userRepo);
             }
-           
-
+          
         }
 
         [HttpGet]
@@ -47,7 +46,6 @@ namespace UserGuide.Server.Controllers
             
             var result =await _userRepo.AddUser(userData);
 
-            var UserLogin = userData.UserLogin.Split('\\').ToArray();
             CheckUserInActiveDirectory(userData, result);
             return Ok(result);
         }
@@ -69,20 +67,21 @@ namespace UserGuide.Server.Controllers
 
         private void CheckUserInActiveDirectory(UserData userData, ServiceResponse result)
         {
-            var domenLogin = userData.UserLogin.Split('\\').ToArray();
+            string[] domenLogin = userData.UserLogin.Split('\\').ToArray();
             var userInAD = _ADservice.ContainsUser(domenLogin[0], domenLogin[1]);
-            if (!userInAD )
-            {   
-                result.Success = result.Success == 200? 102: result.Success;
-                result.Message = result.Message +", данный пользователь отсутcтвует в Active Directory";
-            } else
+            if (!userInAD)
             {
-                result.Message = result.Message + ", данный пользователь присутствует в Active Directory";
+                result.Success = result.Success == 200 ? 102 : result.Success;
+                result.Message = result.Message + WebConstant.FindUserInADNotSuccess;
+            }
+            else
+            {
+                result.Message = result.Message + WebConstant.FindUserInADSuccess;
             }
         }
 
 
-
-
+   
+      
     }
 }
